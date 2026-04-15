@@ -1,0 +1,46 @@
+# import os
+# os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+def cnn():
+    img = plt.imread("./data/cnn_train1.jpg") #读数据
+    # print(img)
+    # print(img.shape)
+
+    #转维度(474,474,3) ->(3,474,474)
+    img = torch.tensor(img,dtype=torch.float)
+    img = img.permute(2,0,1)
+    #print(img.shape)
+
+    #增加维度 (3,474,474) ->(1,3,474,474) 表示1张3*474*474的图
+    img = img.unsqueeze(dim=0)
+    #print(img.shape)
+
+    #创建卷积层
+    conv = nn.Conv2d(3,4,3,2) #(输入通道,输出通道(卷积核个数),卷积核大小,步长,填充)
+
+    #卷积计算
+    conv_img = conv(img)
+    #print(conv_img)
+    #print(conv_img.shape)
+
+    img = conv_img[0]
+    #可视化
+    # img = img.permute(1,2,0)
+    # feature0 = img[:,:,0].detach().numpy() #0,1,2,3分别查看
+    # plt.imshow(feature1)
+    # plt.show()
+
+    #创建最大池化层
+    pool = nn.MaxPool2d(2,2) #(池化核大小,步长,填充)
+    output = pool(img)
+    output = output.permute(1,2,0)
+    feature0 = output[:,:,0].detach().numpy() #0,1,2,3分别查看
+    plt.imshow(feature0)
+    plt.show()
+
+if __name__ == "__main__":
+    cnn()
