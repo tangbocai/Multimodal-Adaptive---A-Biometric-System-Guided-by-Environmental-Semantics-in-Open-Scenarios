@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog
 
 # 添加中文字体支持
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
-plt.rcParams['axes.unicode_minus'] = False   # 解决负号 '-' 显示为方块的问题
+plt.rcParams['axes.unicode_minus'] = False
 
 def analyze_light(image_path):
     # 1. 读取图片
@@ -13,7 +15,7 @@ def analyze_light(image_path):
         print(f"错误：无法读取图片 '{image_path}'，请检查路径。")
         return
 
-    # 2. 将图片从BGR转换到HSV色彩空间 (OpenCV默认读取为BGR)
+    # 2. 将图片从BGR转换到HSV色彩空间
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # 3. 提取亮度 (Value) 通道
     v_channel = hsv_img[:, :, 2]
@@ -39,7 +41,7 @@ def analyze_light(image_path):
     plt.figure(figsize=(10, 4))
 
     plt.subplot(1, 2, 1)
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))  # 显示需转回RGB
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     plt.title('原图')
     plt.axis('off')
 
@@ -52,5 +54,14 @@ def analyze_light(image_path):
 
 
 if __name__ == "__main__":
-    # 在下方填写图片路径
-    analyze_light("Black_Footed_Albatross_0002_55.jpg")
+    # 使用文件对话框选择图片，默认打开“我的电脑”目录
+    root = tk.Tk()
+    root.withdraw()  # 隐藏主窗口
+    file_path = filedialog.askopenfilename(
+        title="请选择一张图片进行分析",
+        filetypes=[("图片文件", "*.jpg *.jpeg *.png *.bmp *.tiff")]
+    )
+    if file_path:
+        analyze_light(file_path)
+    else:
+        print("未选择任何文件，程序退出。")
